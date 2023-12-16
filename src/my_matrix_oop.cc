@@ -1,16 +1,16 @@
-#include "s21_matrix_oop.h"
+#include "my_matrix_oop.h"
 
-S21Matrix::S21Matrix() : S21Matrix(1, 1) {}
+myMatrix::myMatrix() : myMatrix(1, 1) {}
 
-S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
+myMatrix::myMatrix(int rows, int cols) : rows_(rows), cols_(cols) {
   if (rows <= 0 || cols <= 0) {
     throw std::runtime_error("Incorrect Matrix");
   }
   MemoryAllocation();
 }
 
-S21Matrix::S21Matrix(int rows, int cols, const std::vector<double> &array)
-    : S21Matrix(rows, cols) {
+myMatrix::myMatrix(int rows, int cols, const std::vector<double> &array)
+    : myMatrix(rows, cols) {
   if ((cols * rows) != (int)array.size()) {
     throw std::runtime_error(
         "The number of cells does not match the number of array elements");
@@ -23,41 +23,41 @@ S21Matrix::S21Matrix(int rows, int cols, const std::vector<double> &array)
   }
 }
 
-S21Matrix::S21Matrix(const S21Matrix &other)
-    : S21Matrix(other.rows_, other.cols_) {
+myMatrix::myMatrix(const myMatrix &other)
+    : myMatrix(other.rows_, other.cols_) {
   CopyMatrixData(other);
 }
 
-S21Matrix::S21Matrix(S21Matrix &&other)
+myMatrix::myMatrix(myMatrix &&other)
     : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
   other.matrix_ = nullptr;
   other.rows_ = 0;
   other.cols_ = 0;
 }
 
-S21Matrix::~S21Matrix() { RemoveMatrix(); }
+myMatrix::~myMatrix() { RemoveMatrix(); }
 
-int S21Matrix::get_rows() { return rows_; }
+int myMatrix::get_rows() { return rows_; }
 
-int S21Matrix::get_cols() { return cols_; }
+int myMatrix::get_cols() { return cols_; }
 
-void S21Matrix::set_rows(int new_rows) {
+void myMatrix::set_rows(int new_rows) {
   if (rows_ != new_rows) {
-    S21Matrix tmp(new_rows, cols_);
+    myMatrix tmp(new_rows, cols_);
     tmp.CopyMatrixData(*this);
     *this = tmp;
   }
 }
 
-void S21Matrix::set_cols(int new_cols) {
+void myMatrix::set_cols(int new_cols) {
   if (cols_ != new_cols) {
-    S21Matrix tmp(rows_, new_cols);
+    myMatrix tmp(rows_, new_cols);
     tmp.CopyMatrixData(*this);
     *this = tmp;
   }
 }
 
-S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
+myMatrix &myMatrix::operator=(const myMatrix &other) {
   RemoveMatrix();
   this->rows_ = other.rows_;
   this->cols_ = other.cols_;
@@ -66,60 +66,60 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
   return *this;
 }
 
-double &S21Matrix::operator()(int row, int col) {
+double &myMatrix::operator()(int row, int col) {
   if (row >= rows_ || col >= cols_ || row < 0 || col < 0) {
     throw std::runtime_error("Incorrect index");
   }
   return matrix_[row][col];
 }
 
-S21Matrix S21Matrix::operator+(const S21Matrix &o) {
-  S21Matrix tmp(*this);
+myMatrix myMatrix::operator+(const myMatrix &o) {
+  myMatrix tmp(*this);
   tmp.SumMatrix(o);
   return tmp;
 }
 
-S21Matrix S21Matrix::operator-(const S21Matrix &o) {
-  S21Matrix tmp(*this);
+myMatrix myMatrix::operator-(const myMatrix &o) {
+  myMatrix tmp(*this);
   tmp.SubMatrix(o);
   return tmp;
 }
 
-S21Matrix S21Matrix::operator*(const S21Matrix &o) {
-  S21Matrix tmp(*this);
+myMatrix myMatrix::operator*(const myMatrix &o) {
+  myMatrix tmp(*this);
   tmp.MulMatrix(o);
   return tmp;
 }
 
-S21Matrix S21Matrix::operator*(const double num) {
-  S21Matrix tmp(*this);
+myMatrix myMatrix::operator*(const double num) {
+  myMatrix tmp(*this);
   tmp.MulNumber(num);
   return tmp;
 }
 
-bool S21Matrix::operator==(const S21Matrix &o) { return EqMatrix(o); }
+bool myMatrix::operator==(const myMatrix &o) { return EqMatrix(o); }
 
-S21Matrix S21Matrix::operator+=(const S21Matrix &o) {
+myMatrix myMatrix::operator+=(const myMatrix &o) {
   SumMatrix(o);
   return *this;
 }
 
-S21Matrix S21Matrix::operator-=(const S21Matrix &o) {
+myMatrix myMatrix::operator-=(const myMatrix &o) {
   SubMatrix(o);
   return *this;
 }
 
-S21Matrix S21Matrix::operator*=(const S21Matrix &o) {
+myMatrix myMatrix::operator*=(const myMatrix &o) {
   MulMatrix(o);
   return *this;
 }
 
-S21Matrix S21Matrix::operator*=(const double num) {
+myMatrix myMatrix::operator*=(const double num) {
   MulNumber(num);
   return *this;
 }
 
-bool S21Matrix::EqMatrix(const S21Matrix &other) const {
+bool myMatrix::EqMatrix(const myMatrix &other) const {
   if (rows_ != other.rows_ || cols_ != other.cols_) {
     return false;
   }
@@ -133,7 +133,7 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) const {
   return true;
 }
 
-void S21Matrix::SumMatrix(const S21Matrix &other) {
+void myMatrix::SumMatrix(const myMatrix &other) {
   if (rows_ != other.rows_ || cols_ != other.cols_) {
     throw std::runtime_error("Incorrect Matrix");
   }
@@ -144,7 +144,7 @@ void S21Matrix::SumMatrix(const S21Matrix &other) {
   }
 }
 
-void S21Matrix::SubMatrix(const S21Matrix &other) {
+void myMatrix::SubMatrix(const myMatrix &other) {
   if (rows_ != other.rows_ || cols_ != other.cols_) {
     throw std::runtime_error("Incorrect Matrix");
   }
@@ -155,13 +155,13 @@ void S21Matrix::SubMatrix(const S21Matrix &other) {
   }
 }
 
-void S21Matrix::MulMatrix(const S21Matrix &other) {
+void myMatrix::MulMatrix(const myMatrix &other) {
   if (cols_ != other.rows_) {
     throw std::runtime_error(
         "The number of columns in the first matrix does not match the number "
         "of rows in the second");
   }
-  S21Matrix tmp(rows_, other.cols_);
+  myMatrix tmp(rows_, other.cols_);
   for (int i = 0; i < tmp.rows_; i++) {
     for (int j = 0; j < tmp.cols_; j++) {
       for (int k = 0; k < cols_; k++) {
@@ -172,7 +172,7 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   *this = tmp;
 }
 
-void S21Matrix::MulNumber(const double num) {
+void myMatrix::MulNumber(const double num) {
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       matrix_[i][j] *= num;
@@ -180,8 +180,8 @@ void S21Matrix::MulNumber(const double num) {
   }
 }
 
-S21Matrix S21Matrix::Transpose() {
-  S21Matrix transpose(cols_, rows_);
+myMatrix myMatrix::Transpose() {
+  myMatrix transpose(cols_, rows_);
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       transpose.matrix_[j][i] = matrix_[i][j];
@@ -190,7 +190,7 @@ S21Matrix S21Matrix::Transpose() {
   return transpose;
 }
 
-double S21Matrix::Determinant() {
+double myMatrix::Determinant() {
   double deter = 0;
   int degree = 1;
   if (rows_ != cols_) {
@@ -211,11 +211,11 @@ double S21Matrix::Determinant() {
   return deter;
 }
 
-S21Matrix S21Matrix::CalcComplements() {
+myMatrix myMatrix::CalcComplements() {
   if (rows_ != cols_) {
     throw std::runtime_error("This Matrix is not a square");
   }
-  S21Matrix result(rows_, cols_);
+  myMatrix result(rows_, cols_);
   if (cols_ == 1) {
     result.matrix_[0][0] = 1;
   } else {
@@ -230,7 +230,7 @@ S21Matrix S21Matrix::CalcComplements() {
   return result;
 }
 
-S21Matrix S21Matrix::InverseMatrix() {
+myMatrix myMatrix::InverseMatrix() {
   if (rows_ != cols_) {
     throw std::runtime_error("This Matrix is not a square");
   }
@@ -241,14 +241,14 @@ S21Matrix S21Matrix::InverseMatrix() {
   return CalcComplements().Transpose() * (1.0 / deter);
 }
 
-void S21Matrix::MemoryAllocation() {
+void myMatrix::MemoryAllocation() {
   matrix_ = new double *[rows_];
   for (int i = 0; i < rows_; i++) {
     matrix_[i] = new double[cols_]();
   }
 }
 
-void S21Matrix::RemoveMatrix() {
+void myMatrix::RemoveMatrix() {
   if (matrix_) {
     for (int i = 0; i < rows_; i++) {
       delete[] matrix_[i];
@@ -258,7 +258,7 @@ void S21Matrix::RemoveMatrix() {
   }
 }
 
-void S21Matrix::CopyMatrixData(const S21Matrix &other) {
+void myMatrix::CopyMatrixData(const myMatrix &other) {
   int min_rows = std::min(other.rows_, rows_);
   int min_cols = std::min(other.cols_, cols_);
   for (int i = 0; i < min_rows; i++) {
@@ -268,9 +268,9 @@ void S21Matrix::CopyMatrixData(const S21Matrix &other) {
   }
 }
 
-S21Matrix S21Matrix::MinorMatrix(int minor_rows, int minor_cols) {
+myMatrix myMatrix::MinorMatrix(int minor_rows, int minor_cols) {
   int flag_row = 0;
-  S21Matrix tmp(rows_ - 1, cols_ - 1);
+  myMatrix tmp(rows_ - 1, cols_ - 1);
   for (int i = 0; i < rows_ - 1; i++) {
     if (i == minor_rows) {
       flag_row = 1;

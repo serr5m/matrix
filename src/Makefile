@@ -1,6 +1,6 @@
-SFILENAME = s21_matrix_oop.cc
-OFILENAME = s21_matrix_oop.o
-LIBNAME = s21_matrix_oop.a
+SFILENAME = my_matrix_oop.cc
+OFILENAME = my_matrix_oop.o
+LIBNAME = my_matrix_oop.a
 
 TESTNAME = test_matrix
 TFILENAME = test_matrix.cc
